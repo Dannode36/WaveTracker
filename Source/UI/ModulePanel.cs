@@ -19,6 +19,7 @@ namespace WaveTracker.UI {
             selectedSong.width = 125;
 
             speed = new Textbox("Speed (ticks/row)", 167, 12, 132, 40, this);
+            speed.InputField.AllowedCharacters = "0123456789 ";
             rows = new NumberBox("Frame Length", 167, 26, 132, 40, this);
             rows.SetValueLimits(1, 256);
 
@@ -27,40 +28,35 @@ namespace WaveTracker.UI {
         }
 
         public void Update() {
-            if (InFocus || selectedSong.InFocus) {
-                if (InFocus) {
-                    title.Text = App.CurrentModule.Title;
-                    title.Update();
-                    if (title.ValueWasChangedInternally) {
-                        App.CurrentModule.Title = title.Text;
-                        App.CurrentModule.SetDirty();
-                    }
+            if (InFocus || selectedSong.InFocus || title.InFocus || author.InFocus || speed.InFocus || rows.InFocus) {
+                title.Text = App.CurrentModule.Title;
+                title.Update();
+                if (title.ValueWasChangedInternally) {
+                    App.CurrentModule.Title = title.Text;
+                    App.CurrentModule.SetDirty();
+                }
 
-                    author.Text = App.CurrentModule.Author;
-                    author.Update();
-                    if (author.ValueWasChangedInternally) {
-                        App.CurrentModule.Author = author.Text;
-                        App.CurrentModule.SetDirty();
-                    }
+                author.Text = App.CurrentModule.Author;
+                author.Update();
+                if (author.ValueWasChangedInternally) {
+                    App.CurrentModule.Author = author.Text;
+                    App.CurrentModule.SetDirty();
+                }
 
-                    speed.Text = App.CurrentSong.GetTicksAsString();
-                    speed.Update();
-                    if (speed.ValueWasChangedInternally) {
-                        App.CurrentSong.LoadTicksFromString(speed.Text);
-                        App.CurrentModule.SetDirty();
-                    }
+                speed.Text = App.CurrentSong.GetTicksAsString();
+                speed.Update();
+                if (speed.ValueWasChangedInternally) {
+                    App.CurrentSong.LoadTicksFromString(speed.Text);
+                    App.CurrentModule.SetDirty();
+                }
 
-                    rows.Value = App.CurrentSong.RowsPerFrame;
-                    rows.Update();
-                    if (rows.ValueWasChangedInternally) {
-                        App.CurrentSong.RowsPerFrame = rows.Value;
-                        App.PatternEditor.cursorPosition.Normalize(App.CurrentSong);
-                        App.CurrentModule.SetDirty();
+                rows.Value = App.CurrentSong.RowsPerFrame;
+                rows.Update();
+                if (rows.ValueWasChangedInternally) {
+                    App.CurrentSong.RowsPerFrame = rows.Value;
+                    App.PatternEditor.cursorPosition.Normalize(App.CurrentSong);
+                    App.CurrentModule.SetDirty();
 
-                    }
-                    if (editButton.Clicked || App.Shortcuts["General\\Module settings"].IsPressedDown) {
-                        Dialogs.moduleSettings.Open();
-                    }
                 }
                 selectedSong.SetMenuItems(App.CurrentModule.GetSongNames());
                 selectedSong.Value = App.CurrentSongIndex;
@@ -69,6 +65,11 @@ namespace WaveTracker.UI {
                     App.CurrentSongIndex = selectedSong.Value;
                     App.PatternEditor.OnSwitchSong();
                 }
+
+                if (editButton.Clicked || App.Shortcuts["General\\Module settings"].IsPressedDown) {
+                    Dialogs.moduleSettings.Open();
+                }
+
             }
             float meterDecay = 0;
             switch (App.Settings.General.MeterDecayRate) {
