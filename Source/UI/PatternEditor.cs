@@ -1490,16 +1490,11 @@ namespace WaveTracker.UI {
             scaleClipboard = null;
         }
 
-        public int multiSelectMinChannel = -1;
-        public int multiSelectMaxChannel = -1;
-
         /// <summary>
         /// Selects the current channel, then the whole pattern
         /// </summary>
         public void SelectAll() {
-            if (!IsAllSelected() 
-                    && selection.max.Row == CurrentPattern.GetModifiedLength() - 1 && selection.max.Frame == cursorPosition.Frame && selection.max.Column == App.CurrentSong.GetLastCursorColumnOfChannel(selection.max.Channel) 
-                    && selection.min.Row == 0 && selection.min.Frame == cursorPosition.Frame && selection.min.Column == CursorColumnType.Note) {
+            if (!IsAllSelected() && IsAtLeastOneChannelSelected()) {
                 SetSelectionStart(cursorPosition);
                 selectionStart.Channel = 0;
                 selectionStart.Row = 0;
@@ -1529,11 +1524,19 @@ namespace WaveTracker.UI {
 
         private bool IsAllSelected() {
             return selection.max.Channel == App.CurrentModule.ChannelCount - 1 
-                && selection.max.Row == CurrentPattern.GetModifiedLength() - 1 
-                && selection.max.Column == App.CurrentSong.GetLastCursorColumnOfChannel(cursorPosition.Channel) 
-                && selection.min.Channel == 0 
-                && selection.min.Row == 0 
-                && selection.min.Column == CursorColumnType.Note;
+                    && selection.max.Row == CurrentPattern.GetModifiedLength() - 1 
+                    && selection.max.Column == App.CurrentSong.GetLastCursorColumnOfChannel(cursorPosition.Channel) 
+                    && selection.min.Channel == 0 
+                    && selection.min.Row == 0 
+                    && selection.min.Column == CursorColumnType.Note;
+        }
+        private bool IsAtLeastOneChannelSelected() {
+            return selection.max.Row == CurrentPattern.GetModifiedLength() - 1
+                    && selection.max.Frame == cursorPosition.Frame
+                    && selection.max.Column == App.CurrentSong.GetLastCursorColumnOfChannel(selection.max.Channel)
+                    && selection.min.Row == 0
+                    && selection.min.Frame == cursorPosition.Frame
+                    && selection.min.Column == CursorColumnType.Note;
         }
 
         private void RecordOriginalSelectionContents() {
