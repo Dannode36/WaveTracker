@@ -347,6 +347,7 @@ namespace WaveTracker.UI {
         private void DeleteSelection() {
             EditedText = EditedText.Remove(selectionMin, selectionMax - selectionMin);
             caretPosition = selectionMin;
+            selectionStart = selectionMin; //Force to the min value in the selection as selectionStart won't be updated if the user keeps holding down click
             SelectionIsActive = false;
         }
 
