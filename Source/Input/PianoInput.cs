@@ -135,15 +135,11 @@ namespace WaveTracker {
         /// <param name="note"></param>
         /// <param name="velocity"></param>
         private static void OnNoteOnEvent(int note, int? velocity, bool enterToPatternEditor = false) {
+            if (Dialogs.currentSampleModifyDialog != null && Dialogs.currentSampleModifyDialog.WindowIsOpen) {
+                return;
+            }
             if (!currentlyHeldDownNotes.Contains(note)) {
                 currentlyHeldDownNotes.Add(note);
-
-
-
-
-
-
-
                 CurrentNote = note;
                 CurrentVelocity = velocity ?? 99;
                 if (!Playback.IsPlaying) {
@@ -152,7 +148,6 @@ namespace WaveTracker {
                 ChannelManager.PreviewChannel.SetMacro(App.InstrumentBank.CurrentInstrumentIndex);
                 ChannelManager.PreviewChannel.SetVolume(CurrentVelocity);
                 ChannelManager.PreviewChannel.TriggerNote(CurrentNote);
-
 
                 if (enterToPatternEditor) {
                     App.PatternEditor.TryToEnterNote(note, velocity);
@@ -173,9 +168,6 @@ namespace WaveTracker {
                     ChannelManager.PreviewChannel.SetVolume(CurrentVelocity);
                     ChannelManager.PreviewChannel.TriggerNote(CurrentNote);
                 }
-
-
-
 
             }
             else {

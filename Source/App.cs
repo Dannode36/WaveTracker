@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,7 +12,7 @@ using WaveTracker.UI;
 namespace WaveTracker {
     public class App : Game {
 
-        public const string VERSION = "1.0.4";
+        public const string VERSION = "1.1.0";
         private static App instance;
 
         private GraphicsDeviceManager graphics;
@@ -95,7 +94,6 @@ namespace WaveTracker {
         /// </summary>
         public static SettingsProfile Settings { get; private set; }
 
-
         /// <summary>
         /// A reference to the settings' keyboard shortcuts
         /// </summary>
@@ -130,6 +128,8 @@ namespace WaveTracker {
         /// The timer to set the mouse cursor to an directional arrow instead of the default
         /// </summary>
         public static int MouseCursorArrow { get; set; }
+
+        public static MouseCursor MouseCursor { get; set; }
 
         /// <summary>
         /// The menustrip at the top of the screen
@@ -278,6 +278,7 @@ namespace WaveTracker {
             Window.Title = SaveLoad.FileNameWithoutExtension + (SaveLoad.IsSaved ? "" : "*") + " [#" + (CurrentSongIndex + 1) + " " + CurrentSong.ToString() + "] - WaveTracker " + VERSION;
             WindowHeight = Window.ClientBounds.Height / Settings.General.ScreenScale;
             WindowWidth = Window.ClientBounds.Width / Settings.General.ScreenScale;
+            MouseCursor = MouseCursor.Arrow;
             if (dialogDelay < 2) {
                 dialogDelay++;
                 if (dialogDelay == 2) {
@@ -296,19 +297,6 @@ namespace WaveTracker {
                 Input.dialogOpenCooldown = 3;
             }
             SaveLoad.AutosaveTick();
-            if (Input.dialogOpenCooldown == 0) {
-                if (Input.MousePositionX > 1 && Input.MousePositionX < WindowWidth - 1) {
-                    if (Input.MousePositionY > 1 && Input.MousePositionY < WindowHeight - 1) {
-                        if (MouseCursorArrow == 0) {
-                            Mouse.SetCursor(MouseCursor.Arrow);
-                        }
-                        else {
-                            Mouse.SetCursor(MouseCursor.SizeNS);
-                            MouseCursorArrow--;
-                        }
-                    }
-                }
-            }
 
             Tooltip.Update();
             if (Shortcuts["General\\Reset audio"].IsPressedDown) {
@@ -350,6 +338,14 @@ namespace WaveTracker {
             }
 
             ContextMenu.Update();
+
+            if (Input.dialogOpenCooldown == 0) {
+                if (Input.MousePositionX > 1 && Input.MousePositionX < WindowWidth - 1) {
+                    if (Input.MousePositionY > 1 && Input.MousePositionY < WindowHeight - 1) {
+                        Mouse.SetCursor(MouseCursor);
+                    }
+                }
+            }
             base.Update(gameTime);
         }
 
@@ -459,7 +455,6 @@ namespace WaveTracker {
             }
             Exit();
         }
-
 
         /// <summary>
         /// Catches before closing the app, in case any unsaved changes are present

@@ -11,12 +11,12 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
-    <ProductVersion>1.0.4</ProductVersion>
+    <ProductVersion>1.1.0</ProductVersion>
     <PackageVersion>$(ProductVersion)</PackageVersion>
     <Version>$(ProductVersion)</Version>
     <VersionPrefix>$(ProductVersion)</VersionPrefix>
     <AssemblyVersion>$(ProductVersion)</AssemblyVersion>
-    <FileVersion>1.0.4</FileVersion>
+    <FileVersion>1.1.0</FileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
@@ -45,6 +45,7 @@
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.2.1105" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
     <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NCalcSync" Version="5.2.10" />
     <PackageReference Include="protobuf-net" Version="3.2.30" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
   </ItemGroup>
