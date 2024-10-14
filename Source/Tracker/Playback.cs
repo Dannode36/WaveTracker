@@ -313,14 +313,5 @@ namespace WaveTracker.Tracker {
                 }
             }
         }
-
-        private static int GetTicksFromStart() {
-
-            for (int i = 0; i < position.Frame; i++) {
-
-            }
-            
-            position
-        }
     }
 }

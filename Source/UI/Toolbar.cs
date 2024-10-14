@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using WaveTracker.Tracker;
 
 namespace WaveTracker.UI {
     public class Toolbar : Element {
@@ -206,11 +205,6 @@ namespace WaveTracker.UI {
 
             followModeToggle.Draw();
             visualizerModeToggle.Draw();
-
-            //Timing info
-            //
-            long milliseconds = Playback.
-            Write(App.CurrentSong.)
         }
     }
 }
