@@ -115,11 +115,12 @@ namespace WaveTracker {
             if (!Path.Exists(AutosavesFolderPath)) {
                 Directory.CreateDirectory(AutosavesFolderPath);
             }
-            string[] files = Directory.GetFiles(AutosavesFolderPath);
+            string[] files = new DirectoryInfo(AutosavesFolderPath).GetFiles("*.wtm").OrderByDescending(f => f.LastWriteTime).Select(f => f.FullName).ToArray();
 
             // prevent auto saves folder from growing too large, at a minimum will be the last 3 hours of work
-            if (files.Length > 36) {
-                File.Delete(files[36]);
+            while (files.Length > 36) {
+                File.Delete(files[files.Length - 1]);
+                files = new DirectoryInfo(AutosavesFolderPath).GetFiles("*.wtm").OrderByDescending(f => f.LastWriteTime).Select(f => f.FullName).ToArray();
             }
             lastAutosaveTime = App.GameTime.TotalGameTime;
             WriteTo(Path.Combine(AutosavesFolderPath, FileNameWithoutExtension + "_autosave_" + string.Format("{0:yyyy-MM-dd_HH-mm-ss-fff}", DateTime.Now) + ".wtm"), markAsSaved: false);
@@ -129,7 +130,7 @@ namespace WaveTracker {
             // Autosave every 5th minute
             if ((App.GameTime.TotalGameTime.Minutes + 1) % 5 == 0) {
                 // and only if the module was edited since the last autosave
-                if (!performedAutosave && App.CurrentModule.LastEditedTime > lastAutosaveTime) {
+                if (!performedAutosave) {
                     Autosave();
                     performedAutosave = true;
                 }
@@ -287,24 +288,30 @@ namespace WaveTracker {
                 menu[0] = new MenuOption("Clear", recentFilePaths.Clear);
                 menu[1] = null;
                 for (int i = 0; i < recentFilePaths.Count; i++) {
-                    menu[i + 2] = new MenuOption(i + 1 + ". " + recentFilePaths[i], TryToLoadFile, recentFilePaths[i]);
+                    menu[i + 2] = new MenuOption(i + 1 + ". " + Path.GetFileName(recentFilePaths[i]), TryToLoadFile, recentFilePaths[i]);
                 }
                 return menu;
             }
         }
 
         public static MenuItemBase[] CreateAutosavesMenu() {
-            string[] filepaths = new DirectoryInfo(AutosavesFolderPath).GetFiles("*.wtm").OrderByDescending(f => f.LastWriteTime).Select(f => f.Name).ToArray();
-            if (recentFilePaths.Count == 0) {
+            if (!Path.Exists(AutosavesFolderPath)) {
+                Directory.CreateDirectory(AutosavesFolderPath);
+            }
+            string[] filepaths = new DirectoryInfo(AutosavesFolderPath).GetFiles("*.wtm").OrderByDescending(f => f.LastWriteTime).Select(f => f.FullName).ToArray();
+            if (filepaths.Length == 0) {
                 return [new MenuOption("Open autosaves folder...", OpenAutosavesFolder),
                         null,
-                        new MenuOption("No autosaves found...", OpenAutosavesFolder,false)];
+                        new MenuOption("No autosaves found...", OpenAutosavesFolder, false)];
             }
             else {
-                MenuItemBase[] menu = new MenuItemBase[filepaths.Length + 2];
+                MenuItemBase[] menu = new MenuItemBase[Math.Min(filepaths.Length, 36) + 2];
                 menu[0] = new MenuOption("Open autosaves folder...", OpenAutosavesFolder);
                 menu[1] = null;
                 for (int i = 0; i < filepaths.Length; i++) {
+                    if (i >= 36) {
+                        break;
+                    }
                     menu[i + 2] = new MenuOption(i + 1 + ". " + Path.GetFileName(filepaths[i]), TryToLoadFile, filepaths[i]);
                 }
                 return menu;
